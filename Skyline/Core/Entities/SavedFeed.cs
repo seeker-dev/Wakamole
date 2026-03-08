@@ -1,4 +1,4 @@
-namespace Skyline.Infrastructure.Models;
+namespace Skyline.Core.Entities;
 
 public class SavedFeed
 {

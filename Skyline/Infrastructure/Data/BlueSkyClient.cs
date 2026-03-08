@@ -1,26 +1,21 @@
 using System.Text.Json;
 using System.Text.Encodings.Web;
-using Skyline.Infrastructure.Models;
+using Skyline.Core.Entities;
+using Skyline.Core.Interfaces;
+using Skyline.Infrastructure.Configuration;
 
 namespace Skyline.Infrastructure.Data
 {
-    public class BlueSkyClient
+    public class BlueSkyClient : IBlueSkyClient, IDisposable
     {
-        private string decentralizedIdentifier;
+        private string? decentralizedIdentifier;
         private readonly HttpClient _httpClient;
 
-        public static async Task<BlueSkyClient> InitClient(string url, string username, string password)
-        {
-            var client = new BlueSkyClient(url);
-            await client.LoginAsync(username, password);
-            return client;
-        }
-
-        private BlueSkyClient(string url)
+        public BlueSkyClient(BlueSkyConfiguration config)
         {
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri(url),
+                BaseAddress = new Uri(config.BaseUrl),
                 DefaultRequestHeaders =
                 {
                     {"User-Agent", "Wakamole/1.0"},
@@ -28,7 +23,7 @@ namespace Skyline.Infrastructure.Data
             };
         }
 
-        private async Task LoginAsync(string username, string password)
+        public async Task LoginAsync(string username, string password)
         {
             try
             {

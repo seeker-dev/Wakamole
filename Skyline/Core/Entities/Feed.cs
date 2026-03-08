@@ -1,4 +1,4 @@
-namespace Skyline.Infrastructure.Models;
+namespace Skyline.Core.Entities;
 
 // only getting the bare essentials for now, will expand as needed
 public class Feed

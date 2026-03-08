@@ -1,4 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
+using Skyline.Application.Interfaces;
+using Skyline.Application.Services;
+using Skyline.Core.Interfaces;
+using Skyline.Infrastructure.Configuration;
+using Skyline.Infrastructure.Data;
+using Skyline.Infrastructure.Repositories;
 
 namespace Skyline;
 
@@ -15,6 +21,11 @@ public static class MauiProgram
 			});
 
 		builder.Services.AddMauiBlazorWebView();
+
+		builder.Services.AddSingleton(new BlueSkyConfiguration { BaseUrl = "https://bsky.social" });
+		builder.Services.AddSingleton<IBlueSkyClient, BlueSkyClient>();
+		builder.Services.AddSingleton<IBlueskyService, BlueskyService>();
+		builder.Services.AddSingleton<IUserSettingsRepository, FileUserSettingsRepository>();
 
 #if DEBUG
 		builder.Services.AddBlazorWebViewDeveloperTools();

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Skyline.Infrastructure.Models;
+namespace Skyline.Core.Entities;
 public class FeedResponse
 {
     [JsonPropertyName("feed")]

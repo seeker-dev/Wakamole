@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Skyline.Infrastructure.Models;
+namespace Skyline.Core.Entities;
 
 public class Post
 {
@@ -41,8 +41,17 @@ public class PostRecord
 
 public class PostEmbed
 {
-    [JsonPropertyName("images")]
-    public List<EmbedImage>? Images { get; set; }
+    public string? cid { get; set; }
+    public string? playlist { get; set; }
+    public string? thunbnail { get; set; }
+    public AspectRatio? aspectRatio { get; set; }
+    public List<EmbedImage>? images { get; set; }
+}
+
+public class AspectRatio
+{
+    public int width { get; set; }
+    public int height { get; set; }
 }
 
 public class EmbedImage
@@ -55,4 +64,6 @@ public class EmbedImage
 
     [JsonPropertyName("alt")]
     public string Alt { get; set; } = string.Empty;
+
+    public AspectRatio? aspectRatio { get; set; }
 }

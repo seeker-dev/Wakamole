@@ -1,17 +1,16 @@
-using System.Threading.Tasks;
 using Skyline.Application.DTOs;
 using Skyline.Core.DTOs;
 
 namespace Skyline.Application.Interfaces
 {
-    public interface IBlueSkyService
+    public interface IBlueskyService
     {
-        Task LoginAsync();
+        Task LoginAsync(string username, string password);
 
         Task<IEnumerable<FeedDto>> ListUsersFeedsAsync();
 
-        Task<PagedResult<PostDto>> GetFeedPostsAsync();
+        Task<PagedResult<PostDto>> GetFeedPostsAsync(string feedId, int limit = 30, string cursor = "");
 
-        Task<string> GetProfileDescriptionAsync();
+        Task<string> GetProfileDescriptionAsync(string did);
     }
 }
