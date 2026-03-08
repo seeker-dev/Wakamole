@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text.Encodings.Web;
 using Skyline.Infrastructure.Models;
-using AVFoundation;
 
 namespace Skyline.Infrastructure.Data
 {
