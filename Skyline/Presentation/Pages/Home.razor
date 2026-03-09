@@ -1,75 +1,19 @@
-﻿@page "/"
-<!-- Top Bar -->
-<TopBar />
-<!-- Feed -->
-<div class="feed">
-    @foreach (var post in posts)
-    {
-        <div class="post">
-            <div class="post-header">
-                <div class="avatar">@post.AvatarInitials</div>
-                <div class="user-info">
-                    <div class="username">@post.UserName</div>
-                    <div class="handle">@post.Handle</div>
-                </div>
-                <div class="time">@post.TimeAgo</div>
-            </div>
-            <div class="post-content">
-                @post.Content
-            </div>
-            <div class="post-actions">
-                <button class="action-btn">
-                    <svg fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                    </svg>
-                    <span>@post.Comments</span>
-                </button>
-                <button class="action-btn">
-                    <svg fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/>
-                    </svg>
-                    <span>@post.Shares</span>
-                </button>
-                <button class="action-btn liked" onclick="this.classList.toggle('liked')">
-                    <svg fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
-                    </svg>
-                    <span>@post.Likes</span>
-                </button>
-                <button class="action-btn">
-                    <svg fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    }
-</div>
+﻿@using Skyline.Application.DTOs
+@using Skyline.Application.Interfaces
 
-<!-- Compose Button -->
-<button class="compose-btn">
-<svg fill="none" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
-</svg>
-</button>
+@inject IBlueskyService BlueskyService
+
+@page "/"
+
 
 @code {
-    class Post {
-        public string UserName { get; set; }
-        public string Handle { get; set; }
-        public string AvatarInitials { get; set; }
-        public string Content { get; set; }
-        public string TimeAgo { get; set; }
-        public int Comments { get; set; }
-        public int Shares { get; set; }
-        public int Likes { get; set; }
-    }
-    private List<Post> posts = new List<Post>()
+
+    private IEnumerable<FeedDto> _feeds;
+    private string _latestCursor;
+
+    protected override async Task OnInitializedAsync()
     {
-        new Post { UserName = "Julia Stevens", Handle = "@julia.sky", AvatarInitials = "JS", Content = "Just launched my new portfolio site! It's been a journey learning web design, but seeing it all come together is incredibly rewarding. ✨", TimeAgo = "2h", Comments = 12, Shares = 8, Likes = 45 },
-        new Post { UserName = "Julia Stevens", Handle = "@julia.sky", AvatarInitials = "JS", Content = "Had an amazing time hiking in the mountains this weekend! Nature truly has a way of refreshing the soul. 🏞️", TimeAgo = "2h", Comments = 12, Shares = 8, Likes = 45 },
-        new Post { UserName = "Julia Stevens", Handle = "@julia.sky", AvatarInitials = "JS", Content = "Excited to start my new job next week! Looking forward to new challenges and opportunities. 🚀", TimeAgo = "2h", Comments = 12, Shares = 8, Likes = 45 },
-        new Post { UserName = "Julia Stevens", Handle = "@julia.sky", AvatarInitials = "JS", Content = "Baked my first loaf of sourdough bread today, and it turned out great! Who knew baking could be so therapeutic? 🍞", TimeAgo = "2h", Comments = 12, Shares = 8, Likes = 45 },
-        new Post { UserName = "Julia Stevens", Handle = "@julia.sky", AvatarInitials = "JS", Content = "Just finished reading 'The Alchemist' by Paulo Coelho. Such an inspiring story about following your dreams! 📚", TimeAgo = "2h", Comments = 12, Shares = 8, Likes = 45 }
-    };
+        var feeds = await BlueskyService.ListUsersFeedsAsync();
+        _feeds = feeds.ToList();
+    }
 }

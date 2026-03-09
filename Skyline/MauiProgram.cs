@@ -5,6 +5,7 @@ using Skyline.Core.Interfaces;
 using Skyline.Infrastructure.Configuration;
 using Skyline.Infrastructure.Data;
 using Skyline.Infrastructure.Repositories;
+using MudBlazor.Services;
 
 namespace Skyline;
 
@@ -31,6 +32,8 @@ public static class MauiProgram
 		builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
 #endif
+
+		builder.Services.AddMudServices();
 
 		return builder.Build();
 	}
