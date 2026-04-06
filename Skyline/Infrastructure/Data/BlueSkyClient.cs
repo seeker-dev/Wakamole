@@ -88,7 +88,7 @@ namespace Skyline.Infrastructure.Data
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var document = JsonDocument.Parse(responseContent);
-            var preferences = document.RootElement.GetProperty("data").GetProperty("preferences").EnumerateArray();
+            var preferences = document.RootElement.GetProperty("preferences").EnumerateArray();
             var savedFeeds = from preference in preferences
                 where preference.GetProperty("$type").GetString() == "app.bsky.actor.defs#savedFeedsPrefV2"
                 from feed in preference.GetProperty("items").EnumerateArray()
@@ -99,15 +99,19 @@ namespace Skyline.Infrastructure.Data
                     value = feed.GetProperty("value").GetString()
                 };
 
-            var feedString = string.Join("&feeds=", savedFeeds.Select(f => f.value));
+            var feedUris = savedFeeds
+                .Where(f => f.value != null && f.value.StartsWith("at://"))
+                .Select(f => Uri.EscapeDataString(f.value!));
+            var feedString = string.Join("&feeds=", feedUris);
             var feedGenerators = await _httpClient.GetAsync($"/xrpc/app.bsky.feed.getFeedGenerators?feeds={feedString}");
             feedGenerators.EnsureSuccessStatusCode();
 
-            var reponseContent2 = await feedGenerators.Content.ReadAsStringAsync();
-            var feeds = JsonSerializer.Deserialize<List<Feed>>(reponseContent2, new JsonSerializerOptions
+            var responseContent2 = await feedGenerators.Content.ReadAsStringAsync();
+            var feedsElement = JsonDocument.Parse(responseContent2).RootElement.GetProperty("feeds");
+            var feeds = feedsElement.EnumerateArray().Select(f => JsonSerializer.Deserialize<Feed>(f.GetRawText(), new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
-            });
+            })).Where(f => f != null).Select(f => f!).ToList();
 
             return feeds ?? Enumerable.Empty<Feed>();
         }
@@ -117,7 +121,7 @@ namespace Skyline.Infrastructure.Data
             var url = $"/xrpc/app.bsky.feed.getFeed?feed={feedId}";
             if (!string.IsNullOrEmpty(cursor))
             {
-                url += $"&cursor={cursor}";
+                url += $"&cursor={Uri.EscapeDataString(cursor)}";
             }
 
             url += $"&limit={limit}";

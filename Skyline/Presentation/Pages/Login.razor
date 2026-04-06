@@ -7,8 +7,8 @@
 <MudCard>
     <MudCardContent>
         <MudForm @ref="_form">
-            <MudTextField T="string" Label="Username" Required="true" @bind-Value="_username" RequiredError="Username is required." />
-            <MudTextField T="string" Label="Password" Required="true" @bind-Value="_password" RequiredError="Password is required." />
+            <MudTextField T="string" Label="Username" InputType="InputType.Text" Required="true" @bind-Value="_username" RequiredError="Username is required." @bind-Value:after="ValidateForm" />
+            <MudTextField T="string" Label="Password" InputType="InputType.Password" Required="true" @bind-Value="_password" RequiredError="Password is required." @bind-Value:after="ValidateForm" />
             <MudButton Color="Color.Primary" Disabled="@(!_form.IsValid)" OnClick="LoginAsync">Login</MudButton>
         </MudForm>
     </MudCardContent>
@@ -18,6 +18,8 @@
     private MudForm _form;
     private string _username;
     private string _password;
+
+    private async Task ValidateForm() => await _form.ValidateAsync();
 
     private async Task LoginAsync()
     {
