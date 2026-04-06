@@ -416,3 +416,5 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+Skyline/Settings/muted_description_words.json
+Skyline/Settings/muted_profile_words.json
