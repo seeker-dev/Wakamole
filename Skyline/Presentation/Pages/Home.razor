@@ -2,17 +2,35 @@
 @using Skyline.Application.Interfaces
 
 @inject IBlueskyService BlueskyService
+@inject NavigationManager NavigationManager
 
 @page "/"
 
+<div style="overflow-y:scroll">
+    <Virtualize Items="_feeds" Context="post">
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderAvatar>
+                    <MudAvatar Color="Color.Secondary">I</MudAvatar>
+                </CardHeaderAvatar>
+            </MudCardHeader>
+        </MudCard>
+    </Virtualize>
+</div>
 
 @code {
 
-    private IEnumerable<FeedDto> _feeds;
+    private List<FeedDto> _feeds;
     private string _latestCursor;
 
     protected override async Task OnInitializedAsync()
     {
+        if (!BlueskyService.IsLoggedIn)
+        {    
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+
         var feeds = await BlueskyService.ListUsersFeedsAsync();
         _feeds = feeds.ToList();
     }

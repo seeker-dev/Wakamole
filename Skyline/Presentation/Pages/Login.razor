@@ -1,0 +1,38 @@
+@page "/login"
+@using Skyline.Application.Interfaces
+@using System.Runtime.CompilerServices
+@inject IBlueskyService BlueskyService
+@inject NavigationManager NavigationManager
+
+<MudCard>
+    <MudCardContent>
+        <MudForm @ref="_form">
+            <MudTextField T="string" Label="Username" Required="true" @bind-Value="_username" RequiredError="Username is required." />
+            <MudTextField T="string" Label="Password" Required="true" @bind-Value="_password" RequiredError="Password is required." />
+            <MudButton Color="Color.Primary" Disabled="@(!_form.IsValid)" OnClick="LoginAsync">Login</MudButton>
+        </MudForm>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    private MudForm _form;
+    private string _username;
+    private string _password;
+
+    private async Task LoginAsync()
+    {
+        if (_form.IsValid)
+        {
+            await BlueskyService.LoginAsync(_username, _password);
+        }
+
+        if (BlueskyService.IsLoggedIn)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            // Show error message
+        }
+    }
+}

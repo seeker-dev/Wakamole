@@ -65,6 +65,21 @@ namespace Skyline.Infrastructure.Data
             }
         }
 
+        public async Task LogoutAsync()
+        {
+            if (string.IsNullOrEmpty(decentralizedIdentifier))
+            {
+                throw new InvalidOperationException("Not logged in.");
+            }
+
+            var response = await _httpClient.PostAsync("/xrpc/com.atproto.server.deleteSession", null);
+            response.EnsureSuccessStatusCode();
+
+            // Clear the session information
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+            decentralizedIdentifier = null;
+        }
+
         // Methods to interact with the BlueSky API would go here
         public async Task<IEnumerable<Feed>> GetFeedsAsync()
         {

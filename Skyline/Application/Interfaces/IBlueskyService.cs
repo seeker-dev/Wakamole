@@ -5,7 +5,11 @@ namespace Skyline.Application.Interfaces
 {
     public interface IBlueskyService
     {
+        bool IsLoggedIn { get; }
+
         Task LoginAsync(string username, string password);
+
+        Task LogoutAsync();
 
         Task<IEnumerable<FeedDto>> ListUsersFeedsAsync();
 

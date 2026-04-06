@@ -10,9 +10,20 @@ public class BlueskyService(IBlueSkyClient blueSkyClient) : IBlueskyService
 {
     private readonly IBlueSkyClient _blueSkyClient = blueSkyClient;
 
+    private bool _isLoggedIn = false;
+
+    public bool IsLoggedIn => _isLoggedIn;
+
     public async Task LoginAsync(string username, string password)
     {
         await _blueSkyClient.LoginAsync(username, password);
+        _isLoggedIn = true;
+    }
+
+    public async Task LogoutAsync()
+    {
+        await _blueSkyClient.LogoutAsync();
+        _isLoggedIn = false;
     }
 
     public async Task<IEnumerable<FeedDto>> ListUsersFeedsAsync()
