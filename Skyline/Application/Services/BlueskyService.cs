@@ -41,7 +41,7 @@ public class BlueskyService(IBlueSkyClient blueSkyClient) : IBlueskyService
         var response = await _blueSkyClient.GetPostsAsync(feedId, limit, cursor);
         var pagedResult = new PagedResult<PostDto>
         {
-            Items = [.. response.Feed.Select(ToPostDto)],
+            Items = await Task.WhenAll(response.Feed.Select(ToPostDto)),
             NextPageToken = response.Cursor
         };
         return pagedResult;
@@ -53,7 +53,7 @@ public class BlueskyService(IBlueSkyClient blueSkyClient) : IBlueskyService
         return author.Description;
     }
 
-    private PostDto ToPostDto(FeedItem item)
+    private async Task<PostDto> ToPostDto(FeedItem item)
     {
         var dto = new PostDto
         {
@@ -65,6 +65,11 @@ public class BlueskyService(IBlueSkyClient blueSkyClient) : IBlueskyService
             AuthorDescription = item.Post.author.Description,
             CreatedAt = item.Post.record.CreatedAt
         };
+
+        if (string.IsNullOrEmpty(item.Post.author.Description))
+        {
+            dto.AuthorDescription = await GetProfileDescriptionAsync(item.Post.author.Did);
+        }
 
         if (item.Post.embed != null)
         {

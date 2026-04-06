@@ -27,6 +27,8 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IBlueSkyClient, BlueSkyClient>();
 		builder.Services.AddSingleton<IBlueskyService, BlueskyService>();
 		builder.Services.AddSingleton<IUserSettingsRepository, FileUserSettingsRepository>();
+		builder.Services.AddSingleton<IUserSettingsService, FileUserSettingsService>();
+		builder.Services.AddSingleton<IModerationService, ModerationService>();
 
 #if DEBUG
 		builder.Services.AddBlazorWebViewDeveloperTools();

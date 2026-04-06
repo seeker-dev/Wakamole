@@ -4,6 +4,7 @@
 @using Skyline.Presentation.DTOs
 
 @inject IBlueskyService BlueskyService
+@inject IModerationService ModerationService
 @inject NavigationManager NavigationManager
 
 @page "/"
@@ -22,28 +23,36 @@
                         <MudText Typo="Typo.h6">@item.AuthorName || @item.AuthorHandle</MudText>
                     </CardHeaderContent>
                 </MudCardHeader>
-                <MudCardContent>
-                    <MudText>@item.Content</MudText>
-                </MudCardContent>
-                @if (item.EmbeddedImages?.Any() == true)
+                @if (item.IsInViolation)
                 {
-                    <div class="d-flex flex-wrap gap-2 px-4 pb-2">
-                        @foreach (var img in item.EmbeddedImages)
-                        {
-                            <img src="@img.fullsize" alt="@img.alt" style="max-width:100%; border-radius:4px;" />
-                        }
-                    </div>
+                    <MudText Color="Color.Error">This post has been flagged for violating profile name or description rules.</MudText>
                 }
-                @if (item.EmbeddedVideos?.Any() == true)
+                else
                 {
-                    <div class="px-4 pb-2">
-                        @foreach (var video in item.EmbeddedVideos)
-                        {
-                            <video controls poster="@video.thunbnail" style="max-width:100%; border-radius:4px;">
-                                <source src="@video.playlist" type="application/x-mpegURL" />
-                            </video>
-                        }
-                    </div>
+                    <MudCardContent>
+                        <MudText>@item.Content</MudText>
+                    </MudCardContent>
+
+                    @if (item.EmbeddedImages?.Any() == true)
+                    {
+                        <div class="d-flex flex-wrap gap-2 px-4 pb-2">
+                            @foreach (var img in item.EmbeddedImages)
+                            {
+                                <img src="@img.fullsize" alt="@img.alt" style="max-width:100%; border-radius:4px;" />
+                            }
+                        </div>
+                    }
+                    @if (item.EmbeddedVideos?.Any() == true)
+                    {
+                        <div class="px-4 pb-2">
+                            @foreach (var video in item.EmbeddedVideos)
+                            {
+                                <video controls poster="@video.thunbnail" style="max-width:100%; border-radius:4px;">
+                                    <source src="@video.playlist" type="application/x-mpegURL" />
+                                </video>
+                            }
+                        </div>
+                    }
                 }
             </MudCard>
         </ItemTemplate>
@@ -95,6 +104,16 @@ else
                 break;
             }
         }
+
+        foreach (var post in posts.Items.ToList())
+        {
+            if (await ModerationService.IsProfileNameInViolation(post.AuthorName) ||
+                await ModerationService.IsProfileDescriptionInViolation(post.AuthorDescription))
+            {
+                await ModerationService.MarkPostAsViolationAsync(post);
+            }
+        }
+
 
         count += posts.Items?.Count() ?? 0;
         return posts.Items ?? Enumerable.Empty<PostDto>();

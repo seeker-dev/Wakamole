@@ -5,8 +5,9 @@ namespace Skyline.Infrastructure.Repositories;
 
 public class FileUserSettingsRepository : IUserSettingsRepository
 {
-    private readonly string _mutedDescriptionWordsFilePath = "muted_description_words.json";
-    private readonly string _mutedProfileWordsFilePath = "muted_profile_words.json";
+    private static readonly string _settingsFolder = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "Settings"));
+    private readonly string _mutedDescriptionWordsFilePath = Path.Combine(_settingsFolder, "muted_description_words.json");
+    private readonly string _mutedProfileWordsFilePath = Path.Combine(_settingsFolder, "muted_profile_words.json");
 
     public async Task<IEnumerable<string>> GetProfileDescriptionMutedWords()
     {

@@ -11,6 +11,7 @@ namespace Skyline.Application.DTOs
         public DateTime CreatedAt { get; set; }
         public List<EmbeddedVideo>? EmbeddedVideos { get; set; }
         public List<EmbeddedImage>? EmbeddedImages { get; set; }
+        public bool IsInViolation { get; set; } = false;
     }
 
     public class EmbeddedVideo

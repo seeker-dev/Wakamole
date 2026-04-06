@@ -5,6 +5,8 @@ namespace Skyline.Application.Interfaces
 {
     public interface IModerationService
     {
-        public Task RemovePostFromFeedAsync(int postId, PagedResult<PostDto> posts);
+        public Task<bool> IsProfileNameInViolation(string profileName);
+        public Task<bool> IsProfileDescriptionInViolation(string profileDescription);
+        public Task MarkPostAsViolationAsync(PostDto post);
     }
 }

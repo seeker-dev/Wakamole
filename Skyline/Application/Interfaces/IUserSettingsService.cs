@@ -2,6 +2,6 @@ namespace Skyline.Application.Interfaces;
 
 public interface IUserSettingsService
 {
-    List<string> GetProfileDescriptionMutedWords();
-    List<string> GetProfileNameMutedWords();
+    Task<IEnumerable<string>> GetProfileDescriptionMutedWords();
+    Task<IEnumerable<string>> GetProfileNameMutedWords();
 }
